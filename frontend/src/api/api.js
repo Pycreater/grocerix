@@ -29,3 +29,14 @@ export const registerUser = async (data) => {
   return res.json();
 };
 
+export const addToCart = async (data) => {
+  const res = await fetch("http://localhost:5000/api/cart/add", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  return res.json();
+};
