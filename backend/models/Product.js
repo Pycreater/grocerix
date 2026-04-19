@@ -20,6 +20,11 @@ const productSchema = new mongoose.Schema(
     description: {
       type: String,
     },
+    unitLabel: {
+      type: String,
+      trim: true,
+      default: "1 unit",
+    },
     stock: {
       type: Number,
       default: 0,
