@@ -1,3 +1,4 @@
+const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 
@@ -19,14 +20,26 @@ exports.registerUser = async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      role: "customer",
     });
 
     const savedUser = await user.save();
 
-    res.status(201).json({
-      message: "User registered",
-      user: savedUser,
-    });
+   const token = jwt.sign({ userId: savedUser._id, role: savedUser.role }, process.env.JWT_SECRET, {
+  expiresIn: "7d",
+});
+
+res.status(201).json({
+  message: "User registered",
+  token,
+  user: {
+    _id: savedUser._id,
+    name: savedUser.name,
+    email: savedUser.email,
+    role: savedUser.role,
+  },
+});
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -49,10 +62,21 @@ exports.loginUser = async (req, res) => {
       return res.status(400).json({ message: "Invalid password" });
     }
 
-    res.json({
-      message: "Login successful",
-      user,
-    });
+    const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, {
+  expiresIn: "7d",
+});
+
+res.json({
+  message: "Login successful",
+  token,
+  user: {
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+  },
+});
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
